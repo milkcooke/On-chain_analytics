@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.py[cod]
+
+# Виртуальное окружение
+venv/
+env/
+
+# Данные (не коммитим)
+data/
+*.csv
+*.db
+
+# Ключи API
+.env
+
+# IDE
+.vscode/
+.idea/
