@@ -5,7 +5,7 @@ DB_PATH = os.path.join(os.path.dirname(__file__), "local.db")
 
 def get_conn():
     conn = sqlite3.connect(DB_PATH)
-    conn.execute("PRAGMA journal_mode=WAL")  # чтобы не мешало параллельным чтениям
+    conn.execute("PRAGMA journal_mode=WAL")
     return conn
 
 def init_db():
@@ -74,7 +74,6 @@ def init_db():
     );
     """)
 
-    # Индексы для ускорения
     cur.execute("CREATE INDEX IF NOT EXISTS idx_trades_coin_time ON trades (coin, time DESC);")
     cur.execute("CREATE INDEX IF NOT EXISTS idx_liquidations_coin_time ON liquidations (coin, time DESC);")
     cur.execute("CREATE INDEX IF NOT EXISTS idx_funding_coin_time ON funding_rates (coin, time DESC);")
@@ -87,12 +86,10 @@ def init_db():
     print("Database initialized (SQLite).")
 
 def insert_many(table, rows, columns):
-    """Вставка пачки строк с игнорированием дубликатов."""
     conn = get_conn()
     cur = conn.cursor()
     placeholders = ",".join(["?" for _ in columns])
     cols = ",".join(columns)
-    # Для простоты вставляем по одной, но для SQLite это быстро
     for row in rows:
         try:
             cur.execute(f"INSERT OR IGNORE INTO {table} ({cols}) VALUES ({placeholders})", row)
