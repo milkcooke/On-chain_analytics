@@ -9,15 +9,12 @@ from db import DB_PATH
 def main():
     conn = sqlite3.connect(DB_PATH)
 
-    # 1. Последние 100 сделок
     trades = pd.read_sql("SELECT * FROM trades ORDER BY time DESC LIMIT 100", conn)
     if not trades.empty:
         trades["time"] = pd.to_datetime(trades["time"])
     fig_trades = px.scatter(trades, x="time", y="price", color="side", size="size",
                             title="Последние 100 сделок")
 
-    # 2. Ликвидации за последние 24 часа
-    # В SQLite даты храним как ISO строки, поэтому сравниваем строки
     liq = pd.read_sql("""
         SELECT coin, COUNT(*) as cnt, SUM(size_usd) as total_usd
         FROM liquidations
@@ -26,7 +23,6 @@ def main():
     """, conn)
     fig_liq = px.bar(liq, x="coin", y="total_usd", title="Объём ликвидаций за 24ч, USD")
 
-    # 3. Текущая ставка финансирования (последняя запись по каждой монете)
     funding = pd.read_sql("""
         SELECT coin, funding_rate
         FROM funding_rates
@@ -36,7 +32,6 @@ def main():
     fig_funding = px.bar(funding, x="coin", y="funding_rate",
                          title="Текущая ставка финансирования")
 
-    # 4. Win rate для первого адреса (если задан)
     win_text = ""
     if USER_ADDRESSES and USER_ADDRESSES[0] != "0x0000000000000000000000000000000000000000":
         user = USER_ADDRESSES[0]
@@ -47,7 +42,6 @@ def main():
         else:
             win_text = "<p>Нет данных по сделкам пользователя.</p>"
 
-    # Собираем HTML
     html = f"""
     <!DOCTYPE html>
     <html>
