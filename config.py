@@ -8,7 +8,7 @@ BASE_REST_URL = "https://api.hyperliquid.xyz"
 WS_URL = "wss://api.hyperliquid.xyz/ws"
 
 # База данных
-DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://hyperuser:hyperpass@localhost:5432/hyperliquid")
+DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///local.db")
 
 # Адреса для сбора позиций и сделок (можешь оставить любой для теста)
 USER_ADDRESSES = os.getenv("USER_ADDRESSES", "0x0000000000000000000000000000000000000000").split(",")
